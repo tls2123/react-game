@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>구구단</title>
+        <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+        <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="text/babel">
+            class GuGuDan extends React.Component {
+                constructor(props){
+                    super(props);
+                    this.state = {
+                        //변화하는 값을 넣음 일단 숫자 두개, 내가 입력하는 값, 결과값
+                        first: Math.ceil(Math.random() * 9),
+                        second: Math.ceil(Math.random() * 9),
+                        value: '',
+                        result: '',
+                    };
+                }
+
+                onSubmit = (e) => {
+                    e.preventDefault();
+                    //내가 입력한 값이랑 계산한 값이 같으면
+                    //this.state가 setState에 들어가는 경우에는 함수로 작성해준다.
+                    //setState는 비동기이기때문에 값이 변경될수도 있다.
+                    // prevState는 이전 state를 가지고 잇는 파라메타이다. 
+                    if(parseInt(this.state.value) === this.state.first * this.state.second){
+                        //정답이면 화면이 어떻게 변화하는지
+                        this.setState((prevState) => {
+                            return {
+                                result: `${prevState.first} * ${prevState.second} = ${parseInt(prevState.value)} 정답`,
+                                first: Math.ceil(Math.random() * 9),
+                                second: Math.ceil(Math.random() * 9),
+                                value: '',
+                            };
+                        });
+                        this.input.focus();
+                    }else{
+                        //제시한 first와 second값은 변하지 않게
+                        this.setState({
+                            result: `${this.state.first} * ${this.state.second} = ${this.state.first * this.state.second} 땡`,
+                            value: '',
+                        });
+                        this.input.focus();
+                    }
+                };
+
+                onChange = (e) => {
+                    this.setState({value: e.target.value});
+                }
+
+                //ref를 통해서 input 에 포커스를 주는 방법 중 하나로 input는 다른 이름이어도 상관없음
+                input;
+
+                onRefInput = (c) => {
+                    this.input = c;
+                };
+                //setState를 하면 다시 render이 진행이 된다. 
+
+                //submit는 수동으로 우리가 setstate처럼 수동으로 넣어주는 값만 사용하는것이 좋다.
+                //컨텐츠
+                //컨텐츠 안에는 왠만하면 함수를 넣어지 않고 빼주는 것이 좋다. 이부분은 화면이 변환을 하면 계속 랜더링이 일어나고 그럼 
+                //효율이 떨어지게 된다. 
+
+                //수동으로 변경해야 하는 값만 setState에 넣어줘라 (불변성 때문에 사용) - 자동으로 변경되는 것을 안넣는것이 좋다
+
+                render(){
+                    return (<div>
+                                <div>{this.state.first}곱하기 {this.state.second}는?</div>
+                                <form onSubmit= {this.onSubmit}>
+                                    <input ref={this.onRefInput}type="number" value={this.state.value} onChange={this.onChange}/> 
+                                    <button>입력!</button>    
+                                </form>
+                                <div>{this.state.result}</div>
+                            </div>);
+                }
+            }
+        </script>
+        <script type="text/babel">
+            ReactDOM.render(<GuGuDan />, document.querySelector('#root'))
+        </script>
+    </body>
+</html>
